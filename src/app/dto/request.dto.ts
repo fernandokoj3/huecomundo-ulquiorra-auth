@@ -1,10 +1,32 @@
+import { ApiName, Permission } from "@/domain/model/scope";
 import { VerbMethod } from "@/domain/verb";
-import { Expose, plainToClass, plainToInstance, Transform, Type } from "class-transformer";
-import { IsDefined, IsEnum, validate as _validate } from "class-validator";
-import { Class } from "utility-types";
+import { Expose, plainToInstance, Transform } from "class-transformer";
+import { IsDefined, IsEnum, IsIn } from "class-validator";
+
+export class IssuerPersistRequest {
+
+    @IsDefined()
+    @Expose({ name: "name" })
+    public readonly name: string
+
+    @IsDefined()
+    @Expose({ name: "issuer_id" })
+    public readonly issuerId: string
+
+    @Expose({ name: "description" })
+    public readonly description: string
+
+    @Expose({ name: "scopes" })
+    public readonly scopes: Array<string>;
+
+    @Expose({ name: "validate_signature_activated" })
+    public readonly validateSignatureActived: boolean = true;
+
+}
+
 
 export class AuthorizeRequest {
-    
+
     @IsDefined()
     @Expose({ name: "apiName" })
     public readonly apiName: string
@@ -39,8 +61,8 @@ export class AuthorizeRequest {
     }
 }
 
-export class AuthenticateRequest {
-    
+export class TokenSignatureRequest {
+
     @IsDefined()
     @Expose({ name: "client_id" })
     public readonly clientId: string
@@ -51,14 +73,14 @@ export class AuthenticateRequest {
 
     @IsDefined()
     @Expose({ name: "grant_type" })
-    @IsEnum(VerbMethod)
+    @IsIn(["client_credentials"])
     public readonly grantType: string
 
     @IsDefined()
     @Expose({ name: "signature" })
     public readonly signature: string
 
-    static create(body?: string): AuthorizeRequest {
+    static create(body?: string): TokenSignatureRequest {
         let obj = JSON.parse(body)
         let options = {
             clientId: obj?.clientId,
@@ -66,17 +88,35 @@ export class AuthenticateRequest {
             grantType: obj?.grantType,
             signature: obj?.signature,
         }
-        return plainToInstance(AuthorizeRequest, options);
+        return plainToInstance(TokenSignatureRequest, options);
     }
 }
 
+export class AuthPersistRequest {
 
-export async function validate<T= any> (body: object, $type: Class<T>){
-   let $obj = plainToClass($type, body);
-   let error = await _validate($obj as any, $type, {});
-   return {
-    error,
-    data: $obj
-   }
+    public readonly clientId: string;
+
+    public readonly clientSecretHash: string;
+
+    public readonly description: string;
+
+    public readonly extraPayload: Object;
+
+    public readonly pubRsaSignKey: string;
+
+    public readonly scopes: Array<string>;
+
+    public readonly smTokenSignatureKey: string;
+
+    public readonly validateSignatureActived: boolean;
 }
 
+export class ScopePersistRequest {
+
+    public readonly scope: string;
+
+    public readonly parentScope: string;
+
+    public readonly permissions: ApiName;
+
+}

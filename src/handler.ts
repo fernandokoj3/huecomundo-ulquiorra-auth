@@ -1,49 +1,38 @@
-import { generateRsaKeys, sign, verify } from '@/utils/authUtils';
-import { Auth, Scope } from "@/entity/dynamodb"
+import 'reflect-metadata';
+import '@/config/factory';
+import { create } from '@/controller/authorizer';
 
+(async function () {
 
-// const generateRsaKeys = async ( password: string ) => {
-
-//   let { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-//     modulusLength: 4096,
-//   })
-
-//   let exportOptions = {
-//     cipher: "aes-256-cbc",
-//     format: "pem",
-//     type: "pkcs8",
-//     passphrase: password
-//   } as crypto.KeyExportOptions<"pem">;
-
-//   let $private = privateKey.export(exportOptions).toString()
-//   let $public = publicKey.export({ format: "pem", type: "spki" }).toString()
-
-//   return { privateRsa: $private, publicRsa: $public }
-// }
-
-// const sign = async ( phrase: string, message: string, prv_key: string) => {
-//   const data = Buffer.from( message );
-//   const sign = crypto.sign("SHA256", data , { key: prv_key, passphrase: phrase });
-//   const signature = sign.toString("base64");
-//   return { signature }
-
-// }
-
-// const verify = async ( publicKey: string, signature: string, data: string ) => {
-//   let verify = crypto.verify("SHA256", Buffer.from( data ), publicKey, Buffer.from(signature, "base64"));
-//   return verify
-// }
-
-
-
-(async function (){
-  let passphrase = "teste1234";
-  let client = {
-    clientId : 1,
-    secret: "teste",
-    timestamp: Math.floor(Date.now() / 60)
+  let request = {
+    name: "Test",
+    issuer_id: "1",
+    description: "Issuer test",
+    scopes: ["scope/funct1", "scope/funct2"],
+    validate_signature_activated: true
   }
-  let message = JSON.stringify(client)
+
+  let result = await create({
+    body: JSON.stringify(request),
+    version: '',
+    routeKey: '',
+    rawPath: '',
+    rawQueryString: '',
+    headers: undefined,
+    requestContext: undefined,
+    isBase64Encoded: false
+  }, null)
+
+  console.log(result);
+
+
+  // let passphrase = "teste1234";
+  // let client = {
+  //   clientId: 1,
+  //   secret: "teste",
+  //   timestamp: Math.floor(Date.now() / 60)
+  // }
+  // let message = JSON.stringify(client)
 
   // let definition = {
   //   scope: "test",
@@ -60,26 +49,26 @@ import { Auth, Scope } from "@/entity/dynamodb"
   //   }
   // }
 
-  let { privateRsa, publicRsa } =  generateRsaKeys(passphrase)
-  let s = sign(passphrase, message, privateRsa)
-  let v = verify(publicRsa, s.signature, message)
+  // let { privateRsa, publicRsa } = generateRsaKeys(passphrase)
+  // let $sign = sign(passphrase, message, privateRsa)
+  // let v = verify(publicRsa, $sign, message)
 
-  console.log(privateRsa)
+  // console.log("Private RSA \n")
 
-  console.log("\n")
+  // console.log(privateRsa)
 
-  console.log(publicRsa)
+  // console.log("Public RSA\n")
 
-  console.log("\n")
+  // console.log(publicRsa)
 
-  console.log(s)
+  // console.log("Assinatura\n")
 
-  console.log(v)
+  // console.log($sign)
 
-  await Scope.save({
-    parentScope: null,
-    permissions: {},
-    scope: "testa"
-  })
+  // console.log("É valido\n")
+
+  // console.log(v)
+
+  // console.log(generateClientSecret(32))
 
 })()

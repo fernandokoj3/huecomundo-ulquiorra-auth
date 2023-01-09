@@ -10,8 +10,12 @@
       "ES2015",
       "ES2020",
       "ESNext.BigInt"
-    ] /* Specify library files to be included in the compilation. */,
-    "types": ["jest", "node"],
+    ]
+    /* Specify library files to be included in the compilation. */ ,
+    "types": [
+      "jest",
+      "node"
+    ],
     "allowJs": true /* Allow javascript files to be compiled. */,
     "rootDir": "src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
     "outDir": ".build" /* Redirect output structure to the directory. */,
@@ -29,10 +33,20 @@
     "allowSyntheticDefaultImports": true /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */,
     //"strict": true,
     "paths": {
-      "@/*": ["src/app/*"],
-      "#/*": ["src/test/*"]
+      "@/*": [
+        "src/app/*"
+      ],
+      "#/*": [
+        "src/test/*"
+      ]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", ".build", "ormconfig.ts"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".build"
+  ]
 }
